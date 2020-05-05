@@ -85,7 +85,7 @@ class Solution {
                 l = m + 1;
             }
         }
-        return r;
+        return l-1;
     }
     //278. First Bad Version
     public int firstBadVersion(int n) {
@@ -122,7 +122,11 @@ class Solution {
         }
         return l;
     }
-    // 378. Kth
+    // 378. Kth Smallest Element in a Sorted Matrix
+    /*
+    This one use [l. r) template, the reason is when (count == k), the mid value may not in the matrix
+    we cannot determine return l or r at the point.
+    * */
     public int kthSmallest(int[][] matrix, int k) {
         int lo = matrix[0][0], hi = matrix[matrix.length - 1][matrix[0].length - 1] + 1;//[lo, hi)
         while(lo < hi) {
@@ -138,4 +142,55 @@ class Solution {
         return lo;
     }
 
+    //540. Single Element in a Sorted Array
+    class Solution {
+        public int singleNonDuplicate(int[] nums) {
+         // find the first i that nums[i] != nums[i*] return nums[i]
+            // by check if i is odd/even
+        /*
+        if nums[i] == nums[i*] then choose the right half
+        */
+            int l = 0;
+            int r = nums.length;
+            while (l < r) {
+                int m = l + (r - l)/2;
+                int n = m % 2 == 0 ? m + 1 : m - 1;
+                if ((n >= 0 && n < nums.length) && nums[m] == nums[n]) {
+                    l = m + 1;
+                } else {
+                    r = m;
+                }
+            }
+            return nums[l];
+        }
+        public int singleNonDuplicateTemplate2(int[] nums) {
+            int l = 0;
+            int r = nums.length-1;
+            while (l <= r) {
+                int m = l + (r - l)/2;
+                int n = m % 2 == 0 ? m + 1 : m - 1;
+                if ((n >= 0 && n < nums.length) && nums[m] == nums[n]) {
+                    l = m + 1;
+                } else {
+                    r = m - 1;
+                }
+            }
+            return nums[l];
+        }
+
+        //744. Find Smallest Letter Greater Than Target
+        public char nextGreatestLetter(char[] letters, char target) {
+            int l = 0;
+            int r = letters.length-1;
+
+            while (l <= r) {
+                int m = l + (r -l)/2;
+                if (letters[m] <= target) {
+                    l = m + 1;
+                } else {
+                    r = m - 1;
+                }
+            }
+            return letters[l % letters.length];
+        }
 }

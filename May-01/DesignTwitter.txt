@@ -1,0 +1,105 @@
+Design Twitter
+
+1. Ask question, Clarification
+2. Don't say key words
+
+1. Scenario: Ask/Feature/QPS/DAU/Interfaces
+2. Service: Split/Application/module
+3. Storage: schema/data/sql/noSQL/filesystem
+4. Scale: sharding/optimize
+
+QPS: (queries per second)
+read: 300k
+write: 5k
+DAU(daily active user) * the average time use every day/seconds per day = 150M * 60/86400
+Peak: average conscurrent user * 3
+Read QPS: 300K
+Write QPS: 5k
+要考虑到QPS，用户量，峰值，读和写的区别
+
+Step1: Enumerate
+1. register/login
+2. User profile/Edit
+3. Upload image/video
+3. search
+4. post/share a tweet
+5. timeline/news feed
+6. follow/unfollow
+
+Sort:选出核心的功能
+1. post a tweet
+2. timeline
+3. news feed
+4. follow/unfollow a user
+5. Register/login
+
+QPS: 100 笔记本就可以
+QPS: 1K
+用一台WEB服务器，single point failure
+QPS: 1M
+需要1000台WEB服务器的集群
+需要考虑如何maintainance
+
+QPS和WEB SERVER/DATABASE 之间的关系
+一台web server 承受是1K的QPS
+一台SQL DATABASE 承受1K 的QPS， 如果JOIN 和 INDEX QUERY 很多，这个值变少
+一台NOSQL DATABASE(CASSANDA) 10K QPS
+一台NOSQL DATABASE(MEMCACAHED) 1M QPS
+
+Pull Model
+
+getNewsFeed(request):
+following = DB.getFollowings(user=request.user)
+news_feeds = empty()
+for follow in following:
+    tweets = DB.getTweets(follow.to_user, 100)
+    new_feeds.merge(tweets)
+sort(news_feeds)
+return news_feeds
+
+
+postTweets:
+    DB.insertTweet(request.user, tweet)
+    return  success
+
+解决：
+在DB之前加入CACHE
+CACHE 每个用户的TIMELINE
+N 次DB 请求->N 次CACHE请求
+TRADE OFF: 只CACHE最近1000条
+
+CACHE 每个用户的NEW FEED
+没有CACHE NEWS FEED的用户，归并N 个用户的100条TWEETS，然后取出结果100条
+有CACHE NEW FEEDS 的用户，归并N个用户的某个时间戳之后所有的
+
+Post Model
+
+为每个用户建一个LIST 储存他的NEWS FEED的信息
+用户发一个TWEET 之后，将该推文逐个发送到每个用户的NEWS FEED LIST中: FANOUT
+用户查看NEWS FEED时， 只需要从NEWS FEED LIST 中读取100条jike
+
+NEWS FEED => 1DB READ
+POST FEED => N DB WRITES
+(可以异步处理在后台执行， 用户无需等待）
+
+NEW FEED TABLE
+ID INTEGER
+OWNER_ID FOREIGN KEY
+TWEET_ID FOREIGN KEY
+CREATED_AT TIMESTAMP
+
+getNewsFeed(request):
+    return DB.getNewsFeed(request.user)
+
+postTweet(request, tweet_info):
+    tweet=DB.insertTweet(request.user, tweet.info)
+    AsyncService::fanoutTweet(request.user, tweet)
+    return success
+
+AsyncService::fanoutTweet(user, tweet): // followers的数目可能会很大
+    followers=DB.getFollowers(user)
+    for follower in followers:
+        DB.insertNewsFeed(tweet, follower)
+
+
+
