@@ -26,6 +26,11 @@ class Solution {
         int ans = 0;
         while (dividend - divisor >= 0) {
             int x = 0;
+            /*
+            1 << 4 = : 16
+            10 << 4 = : 160
+            10 << 1 << 4 = : 320
+             */
             while (dividend - (divisor << 1 << x) >= 0) {
                 x++;
             }
