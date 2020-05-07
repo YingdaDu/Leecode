@@ -22,6 +22,9 @@ def binary_search(l, r):
 find the max in an int array
 Arrays.stream(piles).max().getAsInt()
 
+Split string with , and map the string value to double
+Stream.of(value.split(",")).map(Double::valueOf).collect(Collectors.toList())
+
 
 
 
