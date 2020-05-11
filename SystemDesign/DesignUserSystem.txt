@@ -1,0 +1,216 @@
+Design user syetem
+1. Memcached
+2. Authentication
+3. SQL vs NoSql
+4. Friendship
+
+How to scale ?
+1. Sharding
+2. Consistent Hashing
+3. Replica
+
+Scenario, Service, Storage, Scale
+1. 注册，登录，查询，用户修改
+2.支持100M DAU
+注册，登录，信息修改QPS
+100M * 0.1 /86400 = 100
+0.1 = 平均每个用户平均登录，注册，信息修改
+PEAK = 300
+查询的QPS 约
+100 M * 100 / 86400 = 100k
+100 = 平均每个用户每天与查询用户信息相关的操作次数
+PEAK = 100 K * 3 = 300K
+
+Service 服务
+一个 AuthService 负责登录注册 (last login time)
+一个 UserService 负责用户信息储存与查询
+一个 FriendshipService 负责好友关系储存
+
+MySQL/ PostSql 等SQL数据库的性能
+1K QPS
+MongoDB / Cassandra 硬盘型NOSQL 数据库的性能
+10k QPS
+Redis / Memcached 内存型NOSQL 数据库的性能
+100k ~ 1m QPS
+
+300QPS 可以只用3~5 台SQL就可以了
+
+用户系统特点：
+读非常读， 写非常少
+一个读多写少的系统， 一定要用cache进行优化
+
+给人用的系统，一般都是读多写少
+给机器用的系统，一般都是读少写多 （比如爬虫）
+
+
+CACHE 是什么
+缓存， 把之后可能要查询的东西先存一下 （下次要用的时候直接从这里拿，无需重新计算和储存数据库）
+可以理解成一个HASHMAP
+KEY-VALUE的结构
+有哪些常用的cache系统
+Memcached （不支持数据持久化）
+Redis （支持数据持久化）
+Cache 一定存在内存吗？
+不是
+Cache这个概念并没有指定存在什么样的储存介质中
+File System也可以做cache ()
+CPU 也有cache (L1, L2, L3 CACHE)
+
+Cache 一定指server side cache 吗？
+不是，Frontend / client / Browser 也可以客户端的CACHE
+
+MEMORY CACHE 是相对file SYSTEM
+CPU 相对的 memory
+FILE SYSTEM 相对于 NETWORK
+
+MEMCAHCED （有TTL）
+
+cache.set("a", "b")
+cache.get("a")
+>> b
+
+#wait for 60 seconds
+cache.get("a")
+>> null
+
+#for some reason like out of memeory
+#key can be evicted
+
+先要DELETE CACHE, SET DATABASE (write through, write invalid)
+
+Authentication Service
+用户是如何实现登录与保持登录
+会话表SESSION
+用户LOGIN 以后
+创建一个SESSION 对象
+并把SEESION_KEY 作为COOKIE 值返回给浏览器
+浏览器应该把该值记录在浏览器的COOKIE 中
+用户每次向服务器发送访问， 都会自动带上该网站所有的COOKIE
+此时服务器检测到cookie中的SESSION_KEY 是有效的（没过期）， 就认为用户登录了
+
+------------------------------------------------
+ session table
+-----------------------------------------------
+session_key | string | 一个HASH值，全局唯一，无规律
+user_id | foreign key | 指向 USER TABLE
+expire_id | timestamp | 什么时候过期
+
+用户logout 之后
+从SESSION TABLE里删除对应数据
+
+SESSION TABLE存在哪里
+理论上 数据库, 缓存都可以,即便断电了相当于所有用户都logout也没什么问题
+需要考虑登录产生的写操作会有一波PEAK
+存在数据库里会更好， 如果访问多，可以用cache
+
+小结：
+对于user syetem而言：
+写很少 --- 从QPS 的角度来讲， 一台SQL可能就可以搞定
+读很多 --- 可以使用MEMCACHED 进行优化
+
+如果读写都很多：
+方法一：更多数据库服务器分摊流量
+方法二： REDIS 这种读写都很快的CACHE-THROUGH型的DATABASE （memory和database的打包）
+Memcache 是一个CACHE-SIDE型的DATABASE, CLIENT 需要自己负责管理CACHE-MISS时的LOADING
+
+单向好友关系（TWITTER, INSTAGRAM, 微博）
+from_user_id foreign_key 用户主体
+to_user_id foreign_key 被关注的人
+
+双向好友关系（微信，facebook)
+方案一： 存两条信息，A 关注了 B， B 关注 A
+方案二： 存一个信息，查询两次
+
+好友关系操作简单：基本上都是KEY_VALUE
+
+大部分情况SQL或者NOSQL都可以
+需要TRANSACTION的话不能选NOSQL （比如银行转账）
+
+SQL 更成熟
+NOSQL 很多事情要亲力亲为（Serialization, Secondary Index)
+
+如果存在SQL
+Friendship table
+-------------------------------------------------
+smaller_id | foreign key | 双向好友关系中id小一点，index = true
+larger_id | foreign key | 双向关系中id大一点, index = true
+
+Cassandra 是一个三层结构NOSQL的
+第一层： ROW_KEY --- 确定在哪个机器上
+又称HASH_KEY
+也是传统的KEY_VALUE 中的KEY
+任何的查询都需要带上这个KEY， 无法进行RANGE_KEY
+查询任何数据都需要带上ROW_KEY
+最常用ROW_KEY: USER_ID
+第二层： column key
+是排序的， 可以进行RANGE_QUERY
+可以是复合值，比如是一个TIMESTAMP + USER_ID的组合
+第三层: VALUE
+一般是STRING
+如果你需要存很多信息的话，需要自己做SERILIZATION
+
+
+ROW_KEY : USER_ID
+COLUMN_KEY: OTHER_USER_ID
+VALUE => TIMESTAMP, ISBOLCKED
+
+how to scale:
+single point failure
+1. sharding
+2. Replica
+
+数据拆分： Sharding
+按照一定的规则， 将数据拆分不同的部分， 保存不同的机器上
+
+数据备份： replica
+通常存3份
+Replica同时可以分摊读请求
+
+sharding
+Sql 自身不带Sharding功能，需要码农亲自上手
+Cassandra 为例的NOSQL大多数都自带SHARDING
+
+
+可以有
+VERTICAL SHARDING
+例1： User table，friendship，auth table 放在不同的机器上
+例2：
+比如：你知道EMAIL, USERNAME, PASSWORD不会经常变动
+但是push_preference, avatar相对来说变动大
+可以把他们拆分成两个表USERTABLE, USERPROFILE TABLE
+放在两个机器上
+如果USER PROFILE挂了，也不会影响USER的正常登录
+缺点：
+SINGLE POINT FAILURE
+表很大不可以拆分了
+
+HORIZONTAL SHARDING
+简单粗暴： 10台机器 user_id % 10
+但是如果10台不够了，加一台机器的时候，很困难，所有数据都要迁移
+数据迁移的问题：
+1. 慢，牵一发动全身
+2. 迁移期间，服务器的压力增大，容易挂
+3. 容易造成数据的不一致性
+可以用CONSISTENT HASHING
+
+一个简单的一致性HASH 算法
+1. 将KEY MOD 一个很大的数 360
+2. 将360分配给N数据， 每个机器负责一段区间
+3. 区间分配信息记录为一张表存在WEB SERVER上
+4. 新加的一台机器的时候，在表中选择一个位置插入，匀走相邻两台机器的一部分数据
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
