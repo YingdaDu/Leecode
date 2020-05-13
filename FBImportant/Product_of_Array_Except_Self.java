@@ -70,7 +70,6 @@ class Solution {
                 ans[i] = ans[i]/nums[i];
             }
         }
-
         return ans;
     }
 
