@@ -2,3 +2,8 @@ Time complexity
 通过O(n)的时间把n的问题，变成了两个n/2的问题  --- O(nlog(n))
 通过O(1)的时间把n的问题，变成了两个n/2的问题 --- O(n)
 
+Traverse(全局变量) vs Divide Conquer
+They are both recursive Algorithm
+Result in parameter vs result in return value
+top down or buttom up
+
