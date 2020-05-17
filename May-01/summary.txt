@@ -25,6 +25,9 @@ Arrays.stream(piles).max().getAsInt()
 Split string with , and map the string value to double
 Stream.of(value.split(",")).map(Double::valueOf).collect(Collectors.toList())
 
+find the frequency in queue
+int count = Collections.frequency(queue, num);
+
 
 
 

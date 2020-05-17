@@ -125,6 +125,12 @@ to_user_id foreign_key 被关注的人
 
 大部分情况SQL或者NOSQL都可以
 需要TRANSACTION的话不能选NOSQL （比如银行转账）
+如果需要丰富的SQL qeury nosql的query 不是很丰富
+大多数frmework 与SQL的数据库的兼容性很好
+SQL代码写的会比较少
+需要Sequential ID 的话用SQL
+Nosql 帮你做了replica和sharding, sql需要自己做
+
 
 SQL 更成熟
 NOSQL 很多事情要亲力亲为（Serialization, Secondary Index)
@@ -200,6 +206,41 @@ HORIZONTAL SHARDING
 4. 新加的一台机器的时候，在表中选择一个位置插入，匀走相邻两台机器的一部分数据
 
 
+TreeMap 在log(n)的时间内找到比某个数大的最小值
+
+backup and replica的区别
+backup是定期做，是死的的数据，离线的，replica 是同时做，是活的数据，需要被调用的数据，在线
+
+Backup:
+
+一般是周期性，比如每天晚上进行一次
+当数据丢失的时候，通常只能恢复到之前的某个时间点
+Backup不用做在线服务，不分摊读请求
+
+Replica
+
+是实时的， 在数据写入的时候，就会以复制品的形式存为多份
+当数据丢失的时候，可以马上通过其他的复制品恢复
+replica 用作在线的数据服务，分摊读请求
+
+
+My SQL Replica
+以MYSQL为代表的SQL数据库，通常自带master-slave的replica的方法
+master负责写, slave负责读
+slave从master中同步数据
+
+No sql 自带的replica的方式就是consistent hashing 环上顺时针存三分
+
+原理 Write Ahead log
+SQL 数据库的任何操作，都会以log的形式来做一份记录
+比如数据A 在B 时刻 从 C 改到D
+slave被激活之后，告诉master我在了
+master有任何操作就会通知slave来读log
+因此slave是有延迟的
+
+master挂了怎么办
+将一台slave升级到master，接受读和写
+可能会造成一定程度的数据丢失和不一致
 
 
 
@@ -210,6 +251,8 @@ HORIZONTAL SHARDING
 
 
 
+
+c
 
 
 
