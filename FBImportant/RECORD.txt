@@ -1,4 +1,30 @@
 199. Binary Tree Right Side View
 340. Longest Substring with At Most K Distinct Characters
 136. single number
-540
+540. single element in sorted array
+
+215. Kth Largest Element in an Array
+98. Validate Binary Search Tree
+
+680. Valid Palindrome II
+430. Flatten a Multilevel Doubly Linked List
+71. Simplify Path
+1249. Minimum Remove to Make Valid Parentheses
+301. Remove Invalid Parentheses
+
+Design something similar to Web crawler given you have 10000 bots to help you.
+
+101. Symmetric Tree
+91. Decode Ways
+339.Nested List Weight Sum
+51. N-Queens // N = 8
+49. Group Anagrams
+101. Symmetric Tree
+91. Decode Ways
+380. Insert Delete GetRandom O(1) follow up：如果每个element有一个weight值，weight值大的element被随机选中的概率高于weight小的。
+33	Search in Rotated Sorted Array
+785	Is Graph Bipartite?
+
+cross team product，collaboration skills，resolve onflicts
+top K popular songs in the past 7 days
+Facebook newsfeed API design

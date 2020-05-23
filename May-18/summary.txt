@@ -1,0 +1,2 @@
+找majority可以使用打擂台算法,
+Boyer-Moore

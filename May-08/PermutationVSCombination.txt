@@ -1,0 +1,24 @@
+Permutation
+
+P(nums, d, n, used, curr, ans);
+    if (d == n):
+        ans.append(curr)
+        return
+
+    for i = 0 to nums.length: //从0开始
+        if used[i] continue
+        used[i] = true
+        curr.push(nums[i])
+        P(nums, d+1, n, used, curr, ans)
+        curr.pop()
+        used[i] = false
+
+
+C(nums, d, n, s, curr, ans):
+        if  d == n:
+            ans.add(curr)
+            return
+        for i = s to nums.length
+            curr.push(nums[i])
+            C(nums, d+1, n, i+1, curr, ans)
+            curr.pop()
