@@ -30,7 +30,7 @@ class Solution {
 Prefix sum using hashMap
 keep tracking of the prefix sums and their counts
 check how many arrays nums[0:j] j < i has sum = cur_sum - k
-the they are the same num of arrays that nums[j+1, i] that have the sum
+the they are the same num of arrays that nums[j+1, i] that have the sum k
  */
 class Solution {
     public int subarraySum(int[] nums, int k) {

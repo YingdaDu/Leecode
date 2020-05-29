@@ -12,6 +12,13 @@
 1249. Minimum Remove to Make Valid Parentheses
 301. Remove Invalid Parentheses
 
+973. K Closest Points to Origin （quick select average O(N))
+339. Nested List Weight Sum
+364. Nested List Weight Sum II
+191. Number of 1 bits
+3. Longest Substring Without Repeating Characters  -- sliding window
+
+
 Design something similar to Web crawler given you have 10000 bots to help you.
 
 101. Symmetric Tree
@@ -24,6 +31,7 @@ Design something similar to Web crawler given you have 10000 bots to help you.
 380. Insert Delete GetRandom O(1) follow up：如果每个element有一个weight值，weight值大的element被随机选中的概率高于weight小的。
 33	Search in Rotated Sorted Array
 785	Is Graph Bipartite?
+
 
 cross team product，collaboration skills，resolve onflicts
 top K popular songs in the past 7 days
