@@ -37,17 +37,20 @@ public int[][] kClosest(int[][] points, int K) {
         }
 
 private int helper (int[][] points, int l, int r) {
-        int[] pivot = points[l];
-        while (l < r) {
-            while (l < r && compare(points[r], pivot) >= 0) r--;
-            points[l] = points[r];
-            while (l < r && compare(points[l], pivot) <= 0) l++;
-            int[] temp = points[l];
-            points[l] = points[r];
-            points[r] = temp;
+        int[] pivot = points[r];
+        int i = l;
+        for (int j = l; j < r; j++) {
+            if (compare(points[j], pivot) <= 0) {
+                int tmp = points[i];
+                points[i] = points[j];
+                points[j] = tmp;
+                i++;
+            }
         }
-        points[l] = pivot;
-        return l;
+        int tmp = points[i];
+        points[i] = points[r];
+        points[r] = tmp;
+        return i;
 }
 
 private int compare(int[] p1, int[] p2) {

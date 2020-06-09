@@ -69,21 +69,22 @@ public List<String> findWords(char[][] board, String[] words) {
     return new ArrayList<String>(set);
 }
 
-public void dfs(char[][] board, int i, int j, String str, Trie trie, HashSet<String> set) {
-    if (i < 0 || i >= board.length || j < 0 || j >= board[0].length || board[i][j] == '#') {
-        return;
-    }
-    str += board[i][j];
-    if (!trie.startsWith(str)) return;
 
-    if (trie.search(str)) {
-        set.add(str);
+    public void dfs(char[][] board, int i, int j, String str, Trie trie, HashSet<String> set) {
+        if (i < 0 || i >= board.length || j < 0 || j >= board[0].length || board[i][j] == '#') {
+            return;
+        }
+        str += board[i][j];
+        if (!trie.startsWith(str)) return;
+
+        if (trie.search(str)) {
+            set.add(str);
+        }
+        char tmp = board[i][j];
+        board[i][j] = '#';
+        dfs(board, i+1, j, str, trie, set);
+        dfs(board, i-1, j, str, trie, set);
+        dfs(board, i, j+1, str, trie, set);
+        dfs(board, i, j-1, str, trie, set);
+        board[i][j] = tmp;
     }
-    char tmp = board[i][j];
-    board[i][j] = '#';
-    dfs(board, i+1, j, str, trie, set);
-    dfs(board, i-1, j, str, trie, set);
-    dfs(board, i, j+1, str, trie, set);
-    dfs(board, i, j-1, str, trie, set);
-    board[i][j] = tmp;
-}

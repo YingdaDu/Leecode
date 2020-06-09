@@ -1,0 +1,8 @@
+1.6m web pages per second
+
+Scenorio: how many web pages
+Service: Crawler, TaskService, StorageService
+Storage: use db to store task, bigTable to stote web pages
+
+regular expression
+usually H3 is what we want
