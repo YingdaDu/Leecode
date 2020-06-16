@@ -49,5 +49,7 @@ Facebook newsfeed API design
 689	Maximum Sum of 3 Non-Overlapping Subarrays
 287	Find the Duplicate Number
 560	Subarray Sum Equals K
-986	Interval List Intersections
+986	Interval List Intersection
 
+767. Reorganize String
+1197
