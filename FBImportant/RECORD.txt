@@ -53,3 +53,14 @@ Facebook newsfeed API design
 
 767. Reorganize String
 1197
+3,
+939
+282
+
+1. coding轮：题一，给定tax bucket和income计算总tax，for loop处理好edge case；题二，匹配括号，力扣原题，栈里保存char index搞定。
+2. coding轮：题一，给定数组，判断是否可以通过一次swap变成有序数组，经提示，排序后和原数组比较，蛮力解，不满意；题二，给定0/1矩阵，每行有序，寻找最左带1列，力扣原题，要求使用binary search。
+3. bq轮
+4. 设计轮：设计系统允许用户rate歌曲，并检索top rated歌曲。读写分离设计。
+5. 几天后，加面coding轮：题一，schdule task，同类task之间有冷却时间，求多久执行完所有task，力扣原题，用map记录task上次调度时间；题二，课程调度，课程间有顺序要求，给定一门，求其前导课程和一可行上课顺序，dfs。
+
+coding难度中等，主要在考察熟练度，整体有惊无险。跪谢大米！
